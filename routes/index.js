@@ -1,6 +1,6 @@
 'use strict';
 
-const TITLE = 'BootstrapCDN';
+var TITLE = 'BootstrapCDN';
 
 function appendLocals(req, res) {
     var proto = req.get('x-forwarded-proto');
