@@ -13,18 +13,19 @@ var MOCHA_OPTS = ' --timeout 15000 --slow 500';
 (function() {
     cd(__dirname);
 
-    function assert(result) {
-        if (result.code !== 0) {
-            process.exit(result.code);
-        }
-    }
-    function assertExec(cmd, options) {
+    var ignoreFailure = function() {};
+    var handleFailure = function(code) {
+        process.exit(code);
+    };
+
+    // map default execute with desired error handling
+    var assertExec = function(cmd, options) {
         if (options) {
-            assert(exec(cmd, options));
+            exec(cmd, options, handleFailure);
         }
 
-        assert(exec(cmd));
-    }
+        exec(cmd, handleFailure);
+    };
 
     //
     // make test
@@ -72,7 +73,8 @@ var MOCHA_OPTS = ' --timeout 15000 --slow 500';
     };
 
     target.tryStop = function() {
-        exec(FOREVER + ' stop app.js || true');
+        // use remapped default exec behavior from shelljs to ignore failures
+        exec(FOREVER + ' stop app.js', ignoreFailure);
     };
 
     target.restart = function() {
